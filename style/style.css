@@ -14,6 +14,9 @@
     --color-requested-word-darker: #4a996c;
     --color-requested-word-dark: #58ad7d;
     --color-requested-word-light: #b3eecd;
+
+    --color-ignore-word-dark: #a5a5a5;
+    --color-ignore-word-darker: #909090; 
 }
 
 body {
@@ -35,6 +38,14 @@ header {
     margin-right: 10vh;
 }
 
+#analyze-button {
+    position: sticky;
+    position: -webkit-sticky; /* Safari */
+
+    bottom: 0.25rem;
+    left: 75%;
+    margin-right: 0.25rem;
+}
 
 /* Put rounded top corners on the first card in the list after the 
    suggestion blurb.
@@ -88,6 +99,27 @@ header {
     margin-bottom: 5rem;
 }
 
+#disclaimer-box {
+    padding: 0.33rem;
+    background: var(--color-theme-lightest);
+    border-left: 3px var(--color-theme-main) solid;
+    font-style: italic;
+}
+
+#back-button {
+    position: absolute;
+    top: 0.25rem;
+    left: 0.25rem;
+    font-size: 2rem;
+    margin: 0;
+    padding: 0;
+    cursor: pointer;
+}
+
+#back-button:hover {
+    color: #666;
+}
+
 .btn-success {
     background-color: #b3eecd !important;
     border: none !important;
@@ -121,12 +153,10 @@ header {
 }
 
 .highlight-informal-word {
-    background: var(--color-informal-word-light);
     border-bottom: 2px solid var(--color-informal-word-dark);
 }
 
 .highlight-repeated-word {
-    background: var(--color-repeated-word-light);
     border-bottom: 2px solid var(--color-repeated-word-dark);
 }
 
@@ -142,11 +172,32 @@ header {
 
 .highlight-btn-replace {
     width: 100%;
-    border-top-left-radius: 0 !important;
-    border-top-right-radius: 0 !important;
+    border-radius: 0 !important;
+    border: none !important;
+    padding: 0 !important;
+    height: 1.66rem;
+}
+
+.highlight-suggestion:last-child {
     border-bottom-left-radius: 0.3rem !important;
     border-bottom-right-radius: 0.3rem !important;
-    border: none !important;
+}
+
+.highlight-suggestion > .highlight-btn-replace-informal:not(:last-child) {
+    border-bottom: 1px solid var(--color-informal-word-darker) !important;
+}
+
+.highlight-suggestion > .highlight-btn-replace-repeated:not(:last-child) {
+    border-bottom: 1px solid var(--color-repeated-word-darker) !important;
+}
+
+.highlight-btn-replace-ignore {
+    background: var(--color-ignore-word-dark) !important;
+    border-radius: 0 !important;
+}
+
+.highlight-btn-replace-ignore:hover {
+    background: var(--color-ignore-word-darker) !important;
 }
 
 .highlight-btn-replace-informal {
@@ -226,6 +277,7 @@ header {
             box-sizing: border-box; /* Chrome, IE8, Opera, Safari 5.1*/
 
     resize: none;
+    margin-bottom: 1rem;
 }
 
 .content-input:focus {
@@ -251,6 +303,10 @@ header {
 .list-group-item-suggestion:hover {
     background: var(--color-theme-lightest);
     cursor: pointer;
+}
+
+.font-normal {
+    font-style: normal;
 }
 
 #review-container {

@@ -8,42 +8,42 @@ function WritingAnalyzer(text) {
         {
             index: 11,
             type: 'repeated',
-            replaceWord: 'hardware'
+            replaceWords: ['hardware', 'products', 'phones']
         },
         {
             index: 29,
             type: 'informal',
-            replaceWord: 'several'
+            replaceWords: ['several', 'many']
         },
         {
             index: 30,
             type: 'informal',
-            replaceWord: 'products'
+            replaceWords: ['products', 'items']
         },
         {
             index: 39,
             type: 'informal',
-            replaceWord: 'professional'
+            replaceWords: ['professional', 'high-end', 'sleek']
         },
         {
             index: 68,
             type: 'repeated',
-            replaceWord: 'so'
+            replaceWords: ['so']
         },
         {
             index: 93,
             type: 'repeated',
-            replaceWord: 'larger'
+            replaceWords: ['larger', 'wider']
         },
         {
             index: 117,
             type: 'repeated',
-            replaceWord: 'nicer'
+            replaceWords: ['nicer', 'fancier']
         },
         {
             index: 122,
             type: 'informal',
-            replaceWord: 'wonderful'
+            replaceWords: ['wonderful', 'amazing', 'futuristic']
         },
     ];
 }
@@ -91,7 +91,7 @@ WritingAnalyzer.prototype._getHtmlForWord = function(word, wordIndex) {
             }
 
             return this._getSuggestionHtml(word.trim(), word.trim() + wordIndex, suggestionForCurrentWord.type, 
-                suggestionForCurrentWord.replaceWord);
+                suggestionForCurrentWord.replaceWords);
         } else {
             return this._getWordHtml(word.trim(), word.trim() + wordIndex);
         }
@@ -137,24 +137,28 @@ WritingAnalyzer.prototype.randomlyAnalyze = function() {
     }
 };
 
-WritingAnalyzer.prototype._getSuggestionHtml = function(word, wordId, type, replaceWord, suggestionMessage) {
+WritingAnalyzer.prototype._getSuggestionHtml = function(word, wordId, type, replaceWords, suggestionMessage) {
     let typeTitle = type[0].toUpperCase() + type.substr(1); 
 
     if (type === 'informal') {
-        var suggestionMessage = `This word is informal. A much better word would be <i>${replaceWord}</i>, it's more professional.`;
+        var suggestionMessage = `This word is informal. A much better word would be <i>${replaceWords[0]}</i>, it's more professional.`;
     } else {
-        var suggestionMessage = `This word has been used too often in your writing. Consider changing ${word} to <i>${replaceWord}</i>.`;
+        var suggestionMessage = `This word has been used too often in your writing. Consider changing ${word} to <i>${replaceWords[0]}</i>.`;
     }
 
-    const suggestionTemplate = `
+    let suggestionTemplate = `
         <a class="highlight-anchor" id="${wordId}"></a>
         <span class="highlight highlight-${type}-word span-word" id="${wordId}-word">${word}</span>
         <div class="highlight-suggestion highlight-suggestion-${type}-word">
             <div class="highlight-suggestion-title highlight-suggestion-title-${type}-word">${typeTitle}</div>
             <div class="highlight-suggestion-content">${suggestionMessage}</div>
-            <button class="btn btn-primary highlight-btn-replace highlight-btn-replace-${type}" data-replace-word="${replaceWord}" data-word-id="${wordId}">Replace Word</button>
-        </div>
-    `;
+            <button class="btn btn-primary highlight-btn-replace highlight-btn-replace-ignore" data-replace-word="!!IGNORE!!" data-word-id="${wordId}">Ignore Suggestion</button>
+        `;
+    for (let replaceWord of replaceWords) {
+        let buttonHtml = `<button class="btn btn-primary highlight-btn-replace highlight-btn-replace-${type}" data-replace-word="${replaceWord}" data-word-id="${wordId}">${replaceWord}</button>`;
+        suggestionTemplate += buttonHtml;
+    }
+    suggestionTemplate += '</div>';
 
     return suggestionTemplate;
 };

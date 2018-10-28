@@ -54,9 +54,27 @@ function getWordIndexFromLetterIndex(text, letterIndex) {
     return -1;
 }
 
+var firstTime = true;
 $(document).ready(function() {
     var replacingWord = false;
     var selectedWordInfo = undefined;
+    var recentlyClosedPopover = false;
+
+    $('#back-button').on('click', function() {
+        window.scrollTo(0, 0);
+
+        // collapse the suggestion lists and make the chevrons point
+        // in the correct direction
+        $('.collapse-suggestions').collapse('hide');
+        $('.chevron').removeClass('fa-chevron-up');
+        $('.chevron').addClass('fa-chevron-down');
+
+        $('#submission-container').css('display', 'block');
+        $('#review-container').css('display', 'none');
+
+        // remove all event handlers from the element
+        $('.highlight-suggestion').off();
+    });
 
     $('#analyze-button').on('click', function() {
         window.scrollTo(0, 0);
@@ -79,7 +97,7 @@ $(document).ready(function() {
 
         $('.highlight').on('mouseenter', function(e) {
             if (!$(e.currentTarget).hasClass('highlight') || $(e.currentTarget).next('.highlight-suggestion').is(':animated') 
-                || replacingWord ) {
+                || replacingWord || recentlyClosedPopover) {
 
                 return;
             }
@@ -87,7 +105,9 @@ $(document).ready(function() {
 
             setTimeout(function() {
                 // if the cursor isn't still over the word, then don't display the issue dialog
-                if (!$(e.currentTarget).data('mouseover')) {
+                // or if the user recently dismissed the popover then don't immediately show it
+                // again because they may have just moused over
+                if (!$(e.currentTarget).data('mouseover') || recentlyClosedPopover) {
                     return;
                 }
 
@@ -117,10 +137,17 @@ $(document).ready(function() {
             }
 
             // delay to give the user an opportunity to bring their cursor back over the popover
+            recentlyClosedPopover = true;
             setTimeout(function() {
                 if (!$(e.currentTarget).data('mouseover')) {
                     $(e.currentTarget).toggle('fold');
                     selectedWordInfo = undefined;
+
+                    setTimeout(function() {
+                        recentlyClosedPopover = false;
+                    }, 300);
+                } else {
+                    recentlyClosedPopover = false;
                 }
             }, 300);
         });
@@ -131,25 +158,15 @@ $(document).ready(function() {
             $('#' + wordId + '-word').animateCss('heartBeat');
         });
 
-        // handle changing the chevron direction when folding/unfolding the accordian
-        $('.card-header-suggestion').on('click', function(e) {
-            let $chevron = $(e.currentTarget).find('.chevron');
-            if ($chevron.hasClass('fa-chevron-up')) {
-                $chevron.removeClass('fa-chevron-up');
-                $chevron.addClass('fa-chevron-down');
-            } else if ($chevron.hasClass('fa-chevron-down')) {
-                $chevron.removeClass('fa-chevron-down');
-                $chevron.addClass('fa-chevron-up');
-            }
-        });
-
         // handle when the user replaces a word
         $('.highlight-btn-replace').on('click', function(e) {
             var wordId = $(e.currentTarget).attr('data-word-id');
             var wordToReplaceWith = $(e.currentTarget).attr('data-replace-word');
 
             $('#' + wordId + '-word').removeClass('highlight highlight-informal-word highlight-repeated-word');
-            $('#' + wordId + '-word').text(wordToReplaceWith);
+            if (wordToReplaceWith !== '!!IGNORE!!') {
+                $('#' + wordId + '-word').text(wordToReplaceWith);
+            }
 
             replacingWord = true;
             $(e.currentTarget).closest('.highlight-suggestion').toggle('fold');
@@ -162,24 +179,40 @@ $(document).ready(function() {
             updateDisplaySuggestionCounts(analyzer);
         });
 
-        // handle when the user clicks on a requested word to replace with
-        $('.list-group-item-suggestion-repeated').on('click', function(event) {
-            if (selectedWordInfo) {
-                // add a period if the original word had it
-                let replaceWord = $(event.currentTarget).text();
-                let originalText = $(selectedWordInfo.parentElement).text();
+        if (firstTime) {
+            firstTime = false;
+            
+            // handle changing the chevron direction when folding/unfolding the accordian
+            $('.card-header-suggestion').on('click', function(e) {
+                let $chevron = $(e.currentTarget).find('.chevron');
+                if ($chevron.hasClass('fa-chevron-up')) {
+                    $chevron.removeClass('fa-chevron-up');
+                    $chevron.addClass('fa-chevron-down');
+                } else if ($chevron.hasClass('fa-chevron-down')) {
+                    $chevron.removeClass('fa-chevron-down');
+                    $chevron.addClass('fa-chevron-up');
+                }
+            });
 
-                if (originalText.indexOf('.') !== -1) {
-                    replaceWord += '.';
+            // handle when the user clicks on a requested word to replace with
+            $('.list-group-item-suggestion-repeated').on('click', function(event) {
+                if (selectedWordInfo) {
+                    // add a period if the original word had it
+                    let replaceWord = $(event.currentTarget).text();
+                    let originalText = $(selectedWordInfo.parentElement).text();
+
+                    if (originalText.indexOf('.') !== -1) {
+                        replaceWord += '.';
+                    }
+
+                    $(selectedWordInfo.parentElement).text(replaceWord + ' ');
+                    selectedWordInfo = undefined;
                 }
 
-                $(selectedWordInfo.parentElement).text(replaceWord + ' ');
-                selectedWordInfo = undefined;
-            }
-
-            replacingWord = true;
-            $('#highlight-suggestion-requested').toggle('fold');
-        });
+                replacingWord = true;
+                $('#highlight-suggestion-requested').toggle('fold');
+            });
+        }
 
         // handle when the user double clicks a word to bring up the requested word popover
         $('.span-word').on('dblclick', function(event) {
