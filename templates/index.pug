@@ -14,12 +14,14 @@ block content
                 button#analyze-button.btn.btn-success Analyze
             .col-md-2
     .container#review-container
-        p#back-button ⬅
+        p#back-button
+            i.fas.fa-arrow-left
         .row
             .col-lg-1
-            .col-lg-6.col-md-8
+            .col-lg-6.col-md-
                 p#disclaimer-box 
-                    span.font-normal ⚠️
+                    span
+                        img(src='images/warning.svg')
                     | After you make changes you may need to fix grammar issues
                 #highlight-suggestion-requested.highlight-suggestion
                     .highlight-suggestion-title.highlight-suggestion-title-requested-word Replacements
