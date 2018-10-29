@@ -58,7 +58,6 @@ var firstTime = true;
 $(document).ready(function() {
     var replacingWord = false;
     var selectedWordInfo = undefined;
-    var recentlyClosedPopover = false;
 
     $('#back-button').on('click', function() {
         window.scrollTo(0, 0);
@@ -93,11 +92,15 @@ $(document).ready(function() {
 
         $('.highlight').on('mouseleave', function(e) {
             $(e.currentTarget).data('mouseover', false);
+            
+            var $suggestionBox = $(e.currentTarget).next('.highlight-suggestion');
+            handleClosingHighlightSuggestion($suggestionBox);
         });
 
         $('.highlight').on('mouseenter', function(e) {
+            var $suggestionBox = $(e.currentTarget).next('.highlight-suggestion');
             if (!$(e.currentTarget).hasClass('highlight') || $(e.currentTarget).next('.highlight-suggestion').is(':animated') 
-                || replacingWord || recentlyClosedPopover) {
+                || replacingWord || $suggestionBox.data('recentlyClosedPopover')) {
 
                 return;
             }
@@ -107,7 +110,7 @@ $(document).ready(function() {
                 // if the cursor isn't still over the word, then don't display the issue dialog
                 // or if the user recently dismissed the popover then don't immediately show it
                 // again because they may have just moused over
-                if (!$(e.currentTarget).data('mouseover') || recentlyClosedPopover) {
+                if (!$(e.currentTarget).data('mouseover') || $suggestionBox.data('recentlyClosedPopover')) {
                     return;
                 }
 
@@ -120,7 +123,7 @@ $(document).ready(function() {
                 // hide all of the suggestion boxes already visible, only allow one at a time
                 $('.highlight-suggestion').hide('fold');
 
-                var $suggestionBox = $(e.currentTarget).next('.highlight-suggestion');
+                $suggestionBox.data('mouseover', true);
                 $suggestionBox.toggle('fold');
 
                 $suggestionBox.css('left', left);
@@ -135,27 +138,31 @@ $(document).ready(function() {
 
         // handle closing the suggestion popover when the user moves their mouse off it
         $('.highlight-suggestion').on('mouseleave', function(e) {
-            $(e.currentTarget).data('mouseover', false);
+            handleClosingHighlightSuggestion($(e.currentTarget));
+        });
+
+        function handleClosingHighlightSuggestion($suggestionBox) {
+            $suggestionBox.data('mouseover', false);
             if (replacingWord) {
                 replacingWord = false;
                 return;
             }
 
             // delay to give the user an opportunity to bring their cursor back over the popover
-            recentlyClosedPopover = true;
+            $suggestionBox.data('recentlyClosedPopover', true);
             setTimeout(function() {
-                if (!$(e.currentTarget).data('mouseover')) {
-                    $(e.currentTarget).toggle('fold');
+                if (!$suggestionBox.data('mouseover')) {
+                    $suggestionBox.hide('fold');
                     selectedWordInfo = undefined;
 
                     setTimeout(function() {
-                        recentlyClosedPopover = false;
+                        $suggestionBox.data('recentlyClosedPopover', false);
                     }, 300);
                 } else {
-                    recentlyClosedPopover = false;
+                    $suggestionBox.data('recentlyClosedPopover', false);
                 }
             }, 300);
-        });
+        }
 
         // handle jumping to a word when pressing the link
         $('.suggestion-anchor-link').on('click', function(e) {
