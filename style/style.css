@@ -163,6 +163,7 @@ header {
 .highlight-suggestion {
     display: none;
     border-radius: 0.5rem;
+    border-top-left-radius: 0;
     position: fixed;
     background: white;
     z-index: 99999;
@@ -245,7 +246,7 @@ header {
 .highlight-suggestion-title {
     font-size: 1.2rem;
     text-align: center;
-    border-top-left-radius: 0.25rem;
+    border-top-left-radius: 0;
     border-top-right-radius: 0.25rem;
     padding: 0.5rem 1rem;
 }

@@ -112,9 +112,14 @@ $(document).ready(function() {
                 }
 
                 var wordOffset = $(e.currentTarget).offset();
-                var left = wordOffset.left + "px";
-                var top = (wordOffset.top - $(document).scrollTop()) + "px";
+                var left = (wordOffset.left + $(e.currentTarget).width()) + "px";
+
+                // the minus 2 is for the border height of the word, it's the underline
+                var top = (wordOffset.top + $(e.currentTarget).outerHeight() - 2 - $(document).scrollTop()) + "px";
                 
+                // hide all of the suggestion boxes already visible, only allow one at a time
+                $('.highlight-suggestion').hide('fold');
+
                 var $suggestionBox = $(e.currentTarget).next('.highlight-suggestion');
                 $suggestionBox.toggle('fold');
 
