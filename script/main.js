@@ -115,7 +115,7 @@ $(document).ready(function() {
                 }
 
                 var wordOffset = $(e.currentTarget).offset();
-                var left = (wordOffset.left + $(e.currentTarget).width()) + "px";
+                var left = (wordOffset.left) + "px";
 
                 // the minus 2 is for the border height of the word, it's the underline
                 var top = (wordOffset.top + $(e.currentTarget).outerHeight() - 2 - $(document).scrollTop()) + "px";
