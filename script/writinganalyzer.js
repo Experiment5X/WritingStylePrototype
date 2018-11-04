@@ -150,14 +150,15 @@ WritingAnalyzer.prototype._getSuggestionHtml = function(word, wordId, type, repl
         <a class="highlight-anchor" id="${wordId}"></a>
         <span class="highlight highlight-${type}-word span-word" id="${wordId}-word">${word}</span>
         <div class="highlight-suggestion highlight-suggestion-${type}-word">
-            <div class="highlight-suggestion-title highlight-suggestion-title-${type}-word">${typeTitle}</div>
-            <div class="highlight-suggestion-content">${suggestionMessage}</div>
-            <button class="btn btn-primary highlight-btn-replace highlight-btn-replace-ignore" data-replace-word="!!IGNORE!!" data-word-id="${wordId}">Ignore Suggestion</button>
+            <button class="btn btn-primary highlight-btn-replace highlight-btn-replace-ignore highlight-btn-replace-ignore-${type}" data-replace-word="!!IGNORE!!" data-word-id="${wordId}">Ignore Suggestion</button>
         `;
     for (let replaceWord of replaceWords) {
         let buttonHtml = `<button class="btn btn-primary highlight-btn-replace highlight-btn-replace-${type}" data-replace-word="${replaceWord}" data-word-id="${wordId}">${replaceWord}</button>`;
         suggestionTemplate += buttonHtml;
     }
+    suggestionTemplate += `
+        <div class="highlight-suggestion-content">${suggestionMessage}</div>
+    `;
     suggestionTemplate += '</div>';
 
     return suggestionTemplate;

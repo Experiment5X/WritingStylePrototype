@@ -6,10 +6,12 @@
     --color-informal-word-darker: #f26e57;
     --color-informal-word-dark: #fc806a;
     --color-informal-word-light: lightpink; 
+    --color-informal-word-lightest: #ffe0e5;
 
     --color-repeated-word-darker: #58aee8;
     --color-repeated-word-dark: #62befc;
     --color-repeated-word-light: powderblue;
+    --color-repeated-word-lightest: #dceff2;
 
     --color-requested-word-darker: #4a996c;
     --color-requested-word-dark: #58ad7d;
@@ -177,6 +179,11 @@ header {
     border: none !important;
     padding: 0 !important;
     height: 1.66rem;
+    background: white !important;
+}
+
+.highlight-btn-replace:hover {
+    background: var(--color-theme-lightest);
 }
 
 .highlight-suggestion:last-child {
@@ -185,34 +192,47 @@ header {
 }
 
 .highlight-suggestion > .highlight-btn-replace-informal:not(:last-child) {
-    border-bottom: 1px solid var(--color-informal-word-darker) !important;
+    border-bottom: 1px solid var(--color-informal-word-light) !important;
 }
 
 .highlight-suggestion > .highlight-btn-replace-repeated:not(:last-child) {
-    border-bottom: 1px solid var(--color-repeated-word-darker) !important;
+    border-bottom: 1px solid var(--color-repeated-word-light) !important;
 }
 
 .highlight-btn-replace-ignore {
-    background: var(--color-ignore-word-dark) !important;
-    border-radius: 0 !important;
+    border-top-right-radius: 0.33rem;
 }
 
-.highlight-btn-replace-ignore:hover {
-    background: var(--color-ignore-word-darker) !important;
+.highlight-btn-replace-ignore-repeated {
+    background: var(--color-repeated-word-dark) !important;
 }
 
-.highlight-btn-replace-informal {
+.highlight-btn-replace-ignore-repeated:hover {
+    background: var(--color-repeated-word-darker) !important;
+}
+
+.highlight-btn-replace-ignore-informal {
     background: var(--color-informal-word-dark) !important;
 }
-.highlight-btn-replace-informal:hover {
+
+.highlight-btn-replace-ignore-informal:hover {
     background: var(--color-informal-word-darker) !important;
 }
 
+.highlight-btn-replace-informal {
+    color: var(--color-informal-word-dark) !important;
+}
+.highlight-btn-replace-informal:hover {
+    color: var(--color-informal-word-darker) !important;
+    background: var(--color-informal-word-lightest) !important;
+}
+
 .highlight-btn-replace-repeated {
-    background: var(--color-repeated-word-dark) !important;
+    color: var(--color-repeated-word-dark) !important;
 }
 .highlight-btn-replace-repeated:hover {
-    background: var(--color-repeated-word-darker) !important;
+    color: var(--color-repeated-word-darker) !important;
+    background: var(--color-repeated-word-lightest) !important;
 }
 
 .highlight-btn-replace-requested {
