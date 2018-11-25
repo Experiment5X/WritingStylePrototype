@@ -28,7 +28,7 @@ function WritingAnalyzer(text) {
         {
             index: 68,
             type: 'repeated',
-            replaceWords: ['so']
+            replaceWords: ['so', 'a lot']
         },
         {
             index: 93,
@@ -72,6 +72,24 @@ WritingAnalyzer.prototype.addReplaceWord = function(wordIndex, newWord) {
     this.replaceWords[wordIndex] = newWord;
 }
 
+WritingAnalyzer.prototype.getSummary = function() {
+    let summary = 'Writing Style Analysis\n\n';
+
+    summary += 'Repeated Words\n';
+    for (let repeatedWord of this.repeatedWords) {
+        summary += repeatedWord.word + '\t->\t' + repeatedWord.suggestion.replaceWords.join(', ') + '\n';
+    }
+    summary += '\n';
+
+    summary += 'Informal Words\n';
+    for (let informalWord of this.informalWords) {
+        summary += informalWord.word + '\t->\t' + informalWord.suggestion.replaceWords.join(', ') + '\n';
+    }
+
+    summary += '\n';
+    return summary;
+}
+
 WritingAnalyzer.prototype._getHtmlForWord = function(word, wordIndex) {
     if (this.specifiedSuggestions) {
         // check if there's a specified suggestion for the current word
@@ -82,7 +100,8 @@ WritingAnalyzer.prototype._getHtmlForWord = function(word, wordIndex) {
         if (suggestionForCurrentWord) {
             let suggestion = { 
                 word: word.trim(),
-                id: word.trim() + wordIndex
+                id: word.trim() + wordIndex,
+                suggestion: suggestionForCurrentWord
             };
             if (suggestionForCurrentWord.type === 'informal') {
                 this.informalWords.push(suggestion);
@@ -141,9 +160,9 @@ WritingAnalyzer.prototype._getSuggestionHtml = function(word, wordId, type, repl
     let typeTitle = type[0].toUpperCase() + type.substr(1); 
 
     if (type === 'informal') {
-        var suggestionMessage = `This word is informal. A much better word would be <i>${replaceWords[0]}</i>, it's more professional.`;
+        var suggestionMessage = '<p class="text-center highlight-suggestion-label highlight-suggestion-label-informal">Informal Word</p>';
     } else {
-        var suggestionMessage = `This word has been used too often in your writing. Consider changing ${word} to <i>${replaceWords[0]}</i>.`;
+        var suggestionMessage = '<p class="text-center highlight-suggestion-label highlight-suggestion-label-repeated">Repeated Word</p>';
     }
 
     let suggestionTemplate = `
@@ -157,7 +176,7 @@ WritingAnalyzer.prototype._getSuggestionHtml = function(word, wordId, type, repl
         suggestionTemplate += buttonHtml;
     }
     suggestionTemplate += `
-        <div class="highlight-suggestion-content">${suggestionMessage}</div>
+        ${suggestionMessage}
     `;
     suggestionTemplate += '</div>';
 

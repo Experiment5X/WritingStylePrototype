@@ -90,6 +90,9 @@ $(document).ready(function() {
 
         updateDisplaySuggestionCounts(analyzer);
 
+        let summaryUrl = 'data:application/octet-stream;charset=utf-8;base64,' + btoa(analyzer.getSummary());
+        $('#btn-summary').attr('href', summaryUrl);
+
         $('.highlight').on('mouseleave', function(e) {
             $(e.currentTarget).data('mouseover', false);
             
@@ -120,6 +123,10 @@ $(document).ready(function() {
                 // the minus 2 is for the border height of the word, it's the underline
                 var top = (wordOffset.top + $(e.currentTarget).outerHeight() - 2 - $(document).scrollTop()) + "px";
                 
+                // show indication in the right panel of the word selected
+                $("#" + $(e.currentTarget).attr('id').replace('-word', '') + "-list-item").closest('.collapse-suggestions').collapse('show');
+                $("#" + $(e.currentTarget).attr('id').replace('-word', '') + "-list-item").animateCss('rubberBand');
+
                 // hide all of the suggestion boxes already visible, only allow one at a time
                 $('.highlight-suggestion').hide('fold');
 
